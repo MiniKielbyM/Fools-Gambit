@@ -223,7 +223,7 @@ MonoBehaviour:
   bobFrequency: 8
   bobAmplitude: 0.05
   veiwBob: 1
-  modelBody: {fileID: 0}
+  modelBody: {fileID: 1171768662}
   playerRigidbody: {fileID: 25457883}
   playerAnimator: {fileID: 0}
   landingAnimation: {fileID: 0}
