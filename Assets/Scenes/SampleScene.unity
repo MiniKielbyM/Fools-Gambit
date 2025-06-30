@@ -223,9 +223,9 @@ MonoBehaviour:
   bobFrequency: 8
   bobAmplitude: 0.05
   veiwBob: 1
-  modelBody: {fileID: 0}
+  modelBody: {fileID: 1171768662}
   playerRigidbody: {fileID: 25457883}
-  playerAnimator: {fileID: 0}
+  playerAnimator: {fileID: 1699508841}
   landingAnimation: {fileID: 0}
   CameraTransform: {fileID: 963194228}
 --- !u!114 &25457885
@@ -441,7 +441,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.009442716, y: 0.0039033643, z: -0.0017023123, w: 0.9999464}
-  m_LocalPosition: {x: 0.0000000024143012, y: 1.6860001, z: -0.027999997}
+  m_LocalPosition: {x: 0.0000000024143012, y: 1.5, z: -0.027999997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
