@@ -1,3 +1,4 @@
+
 #if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
@@ -331,6 +332,62 @@ public class GithubSignOutWindow : EditorWindow
 
 public class GitPanelWindow : EditorWindow
 {
+    private bool remoteHasChanges = false;
+    private bool localHasChanges = false;
+    private async Task CheckRemoteChangesAsync()
+    {
+        await Task.Run(() =>
+        {
+            try
+            {
+                RunGitCommand("fetch origin");
+                string result = RunGitCommand("rev-list HEAD..origin/main --count");
+                remoteHasChanges = int.TryParse(result, out int count) && count > 0;
+            }
+            catch
+            {
+                remoteHasChanges = false;
+            }
+        });
+        Repaint();
+    }
+    private async Task CheckLocalChangesAsync()
+    {
+        await Task.Run(() =>
+        {
+            try
+            {
+                RunGitCommand("fetch origin");
+                string result = RunGitCommand("rev-list origin/main..HEAD --count");
+                localHasChanges = int.TryParse(result, out int count) && count > 0;
+            }
+            catch
+            {
+                localHasChanges = false;
+            }
+        });
+        Repaint();
+    }
+    private async void Update()
+    {
+        if (EditorApplication.timeSinceStartup - lastRefreshTime > refreshInterval)
+        {
+            RefreshGitStatus();
+            Repaint();
+            if (GitUtils.HasGitHubRemote())
+            {
+                await CheckRemoteChangesAsync();
+                await CheckLocalChangesAsync();
+            }
+            else
+            {
+                remoteHasChanges = false;
+                localHasChanges = false;
+            }
+            lastRefreshTime = EditorApplication.timeSinceStartup;
+        }
+    }
+
     private string commitMessage = "";
     private List<GitFileChange> fileChanges = new List<GitFileChange>();
     private double lastRefreshTime;
@@ -372,6 +429,7 @@ public class GitPanelWindow : EditorWindow
     {
         GUILayout.Label("Commit Message", EditorStyles.boldLabel);
         commitMessage = GUILayout.TextField(commitMessage);
+        GUILayout.BeginHorizontal();
         if (GUILayout.Button("✓ Commit", GUILayout.Height(25)))
         {
             if (!string.IsNullOrWhiteSpace(commitMessage))
@@ -384,6 +442,38 @@ public class GitPanelWindow : EditorWindow
                 UnityEngine.Debug.LogWarning("⚠️ Commit message cannot be empty.");
             }
         }
+        EditorGUI.BeginDisabledGroup(!localHasChanges);
+        if (GUILayout.Button("↑ Push  ", GUILayout.Height(25), GUILayout.Width(position.width * 0.25f)))
+        {
+            try
+            {
+                RunGitCommand("push -f");
+                UnityEngine.Debug.Log("✅ Push successful.");
+            }
+            catch (System.Exception e)
+            {
+                UnityEngine.Debug.LogError("❌ Push failed: " + e.Message);
+            }
+            RefreshGitStatus();
+        }
+        EditorGUI.EndDisabledGroup();
+
+        EditorGUI.BeginDisabledGroup(!remoteHasChanges);
+        if (GUILayout.Button("↓ Pull  ", GUILayout.Height(25), GUILayout.Width(position.width * 0.25f)))
+        {
+            try
+            {
+                RunGitCommand("pull");
+                UnityEngine.Debug.Log("✅ Pull successful.");
+            }
+            catch (System.Exception e)
+            {
+                UnityEngine.Debug.LogError("❌ Pull failed: " + e.Message);
+            }
+            RefreshGitStatus();
+        }
+        EditorGUI.EndDisabledGroup();
+        GUILayout.EndHorizontal();
         GUILayout.Space(10);
         GUILayout.Label("Changes", EditorStyles.boldLabel);
         if (fileChanges.Count == 0)
@@ -408,9 +498,16 @@ public class GitPanelWindow : EditorWindow
     {
         try
         {
-            RunGitCommand("add -A");
+            RunGitCommand("add .");
+            RunGitCommand("add .mp3");
+            RunGitCommand("add .wav");
             RunGitCommand($"commit -m \"{message}\"");
             UnityEngine.Debug.Log("✅ Commit successful.");
+            if (EditorUtility.DisplayDialog("Push to GitHub", "Do you want to push your changes to GitHub?", "Push", "Cancel"))
+            {
+                RunGitCommand("push -f");
+                UnityEngine.Debug.Log("✅ Changes pushed to GitHub.");
+            }
             RefreshGitStatus();
             Repaint();
         }
@@ -446,7 +543,7 @@ public class GitPanelWindow : EditorWindow
         return changes;
     }
 
-    private void RunGitCommand(string args)
+    private string RunGitCommand(string args)
     {
         var startInfo = new ProcessStartInfo
         {
@@ -465,8 +562,7 @@ public class GitPanelWindow : EditorWindow
             process.WaitForExit();
             if (!string.IsNullOrEmpty(error))
                 UnityEngine.Debug.LogWarning("Git Error: " + error);
-            else
-                UnityEngine.Debug.Log(output);
+            return output;
         }
     }
 
@@ -483,7 +579,6 @@ public class GitPanelWindow : EditorWindow
             _ => status
         };
     }
-
     private Color GetStatusColor(string status)
     {
         return status switch
