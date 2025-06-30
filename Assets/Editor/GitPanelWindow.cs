@@ -503,11 +503,6 @@ public class GitPanelWindow : EditorWindow
             RunGitCommand("add .wav");
             RunGitCommand($"commit -m \"{message}\"");
             UnityEngine.Debug.Log("✅ Commit successful.");
-            if (EditorUtility.DisplayDialog("Push to GitHub", "Do you want to push your changes to GitHub?", "Push", "Cancel"))
-            {
-                RunGitCommand("push -f");
-                UnityEngine.Debug.Log("✅ Changes pushed to GitHub.");
-            }
             RefreshGitStatus();
             Repaint();
         }
