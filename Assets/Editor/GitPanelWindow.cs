@@ -10,8 +10,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Diagnostics;
-using Unity.VisualScripting;
-
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 public static class GitUtils
 {
     public static bool IsGitRepository(string path = null)
@@ -430,6 +430,7 @@ public class GitPanelWindow : EditorWindow
         GUILayout.Label("Commit Message", EditorStyles.boldLabel);
         commitMessage = GUILayout.TextField(commitMessage);
         GUILayout.BeginHorizontal();
+        EditorGUI.BeginDisabledGroup(!SceneManager.GetActiveScene().isDirty && fileChanges.Count == 0);
         if (GUILayout.Button("✓ Commit", GUILayout.Height(25)))
         {
             if (!string.IsNullOrWhiteSpace(commitMessage))
@@ -442,6 +443,7 @@ public class GitPanelWindow : EditorWindow
                 UnityEngine.Debug.LogWarning("⚠️ Commit message cannot be empty.");
             }
         }
+        EditorGUI.EndDisabledGroup();
         EditorGUI.BeginDisabledGroup(!localHasChanges);
         if (GUILayout.Button("↑ Push  ", GUILayout.Height(25), GUILayout.Width(position.width * 0.25f)))
         {
@@ -464,6 +466,7 @@ public class GitPanelWindow : EditorWindow
             try
             {
                 RunGitCommand("pull");
+                EditorSceneManager.OpenScene(SceneManager.GetActiveScene().path);
                 UnityEngine.Debug.Log("✅ Pull successful.");
             }
             catch (System.Exception e)
@@ -498,6 +501,21 @@ public class GitPanelWindow : EditorWindow
     {
         try
         {
+            Scene activeScene = SceneManager.GetActiveScene();
+            if (activeScene.isDirty)
+            {
+                if (!EditorUtility.DisplayDialog(
+                    "Unsaved Scene",
+                    "The active scene has unsaved changes. Do you want to save it before committing?",
+                    "Save and Commit", "Commit without Saving"))
+                {
+                    return; // User chose not to save
+                }
+                else
+                {
+                    EditorSceneManager.SaveScene(activeScene);
+                }
+            }
             RunGitCommand("add .");
             RunGitCommand("add .mp3");
             RunGitCommand("add .wav");
@@ -555,8 +573,6 @@ public class GitPanelWindow : EditorWindow
             string output = process.StandardOutput.ReadToEnd();
             string error = process.StandardError.ReadToEnd();
             process.WaitForExit();
-            if (!string.IsNullOrEmpty(error))
-                UnityEngine.Debug.LogWarning("Git Error: " + error);
             return output;
         }
     }
