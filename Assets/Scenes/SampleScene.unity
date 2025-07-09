@@ -321,7 +321,6 @@ GameObject:
   - component: {fileID: 1171768664}
   - component: {fileID: 1171768669}
   - component: {fileID: 1171768663}
-  - component: {fileID: 1171768666}
   - component: {fileID: 1171768668}
   - component: {fileID: 1171768670}
   m_Layer: 0
@@ -423,18 +422,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1171768661}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1171768666
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1171768661}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bea95dfb4f64e29418b059d28f0ad0e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1171768668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -448,6 +435,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
+  jumpforce: 5
+  OnGround: 0
 --- !u!114 &1171768669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -470,7 +459,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1171768661}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 1.5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
