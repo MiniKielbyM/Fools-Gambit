@@ -64,7 +64,10 @@ public class PlayerControl : MonoBehaviour
             Invoke(nameof(ResetJump), jumpCooldown);
         }
     }
-
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        
+    }
     private void MovePlayer()
     {
         moveDirection = orientation.forward * moveInput.y + orientation.right * moveInput.x;
