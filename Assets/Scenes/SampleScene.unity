@@ -119,6 +119,80 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &328806022
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 963194228}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.571
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.289
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+      propertyPath: m_Name
+      value: relover HP
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+--- !u!4 &328806023 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6303f64b36bcaac4a9d23e37c7638862, type: 3}
+  m_PrefabInstance: {fileID: 328806022}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,7 +349,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 26.991467
+  field of view: 37.78503
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -305,7 +379,8 @@ Transform:
   m_LocalPosition: {x: -0.0009999871, y: 0.07000017, z: -0.036}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 328806023}
   m_Father: {fileID: 1171768662}
   m_LocalEulerAnglesHint: {x: 1.083, y: 0.446, z: -0.191}
 --- !u!1 &1171768661
@@ -437,6 +512,10 @@ MonoBehaviour:
   moveSpeed: 5
   jumpforce: 5
   OnGround: 0
+  XmouseSensitivity: 250
+  YmouseSensitivity: 5
+  playerBody: {fileID: 1171768662}
+  cam: {fileID: 963194227}
 --- !u!114 &1171768669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -450,7 +529,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   range: 100
-  cam: {fileID: 0}
+  cam: {fileID: 963194227}
 --- !u!54 &1171768670
 Rigidbody:
   m_ObjectHideFlags: 0

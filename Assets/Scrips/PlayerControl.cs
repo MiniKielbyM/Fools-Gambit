@@ -7,8 +7,8 @@ public class PlayerControl : MonoBehaviour
     public float jumpforce = 5f;
     public bool OnGround = false;
     Rigidbody rb;
-    public float mouseSensitivity = 250f;
-
+    public float XmouseSensitivity = 250f;
+    public float YmouseSensitivity = 2;
     public Transform playerBody; // reference to the player's transform
 
     private float xRotation = 0f;
@@ -53,15 +53,16 @@ public class PlayerControl : MonoBehaviour
     void mousemovement()
     {
         // Get mouse input
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X") * XmouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * XmouseSensitivity * Time.deltaTime;
 
         // Rotate the camera up and down
         xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // limit looking too far up or down
+        float camrot = xRotation * YmouseSensitivity;
+        camrot = Mathf.Clamp(xRotation, -90f, 90f); // limit looking too far up or down
 
-        playerBody.Rotate(Vector3.up*mouseSensitivity, mouseX);
-        cam.transform.Rotate(Vector3.right,xRotation);
+        playerBody.Rotate(Vector3.up*XmouseSensitivity, mouseX);
+        cam.transform.localRotation = Quaternion.Euler(camrot,0, 0f);
         // Rotate the player left and r
     }
 }
