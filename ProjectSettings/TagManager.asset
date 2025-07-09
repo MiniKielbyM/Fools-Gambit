@@ -4,7 +4,11 @@
 TagManager:
   serializedVersion: 3
   tags:
+<<<<<<< HEAD
   - Floor
+=======
+  - dummy
+>>>>>>> 75d9426fae626731744bc2d219e43020fb2974db
   layers:
   - Default
   - TransparentFX
