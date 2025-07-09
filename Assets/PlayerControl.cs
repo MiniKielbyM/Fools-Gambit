@@ -10,7 +10,6 @@ public class PlayerControl : MonoBehaviour
     public float jumpCooldown;
     public float airMultiplier;
     private bool readyToJump = true;
-
     [HideInInspector] public float walkSpeed;
     [HideInInspector] public float sprintSpeed;
 
