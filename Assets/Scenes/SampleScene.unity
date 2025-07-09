@@ -322,8 +322,8 @@ GameObject:
   - component: {fileID: 1171768669}
   - component: {fileID: 1171768663}
   - component: {fileID: 1171768666}
-  - component: {fileID: 1171768667}
   - component: {fileID: 1171768668}
+  - component: {fileID: 1171768670}
   m_Layer: 0
   m_Name: A fuckin bean
   m_TagString: Untagged
@@ -453,7 +453,34 @@ MonoBehaviour:
   verticalInput: 0
   moveDirection: {x: 0, y: 0, z: 0}
   rb: {fileID: 0}
---- !u!54 &1171768667
+--- !u!114 &1171768668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171768661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f40b109b0e6c3489ba5a0b6611d8cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+--- !u!114 &1171768669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171768661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdfdef4da4da3c548b0df9353dce961b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  range: 100
+  cam: {fileID: 0}
+--- !u!54 &1171768670
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -480,45 +507,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1171768668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1171768661}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9f40b109b0e6c3489ba5a0b6611d8cc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 5
-  groundDrag: 0
-  jumpForce: 2
-  jumpCooldown: 0
-  airMultiplier: 0
-  walkSpeed: 0
-  sprintSpeed: 0
-  jumpKey: 32
-  playerHeight: 1.485
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 1
-  orientation: {fileID: 1171768662}
---- !u!114 &1171768669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1171768661}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdfdef4da4da3c548b0df9353dce961b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  range: 100
-  cam: {fileID: 0}
 --- !u!1 &1405491359
 GameObject:
   m_ObjectHideFlags: 0
