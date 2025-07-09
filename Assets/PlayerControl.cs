@@ -1,125 +1,119 @@
-using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
 
-public class PlayerControl : MonoBehaviour
+public class PlayerMovementTutorial : MonoBehaviour
 {
-    public float mouseSensitivity = 0.1f;
-    public float moveSpeed = 5f;
-    public float verticalClampMin = -45f;
-    public float verticalClampMax = 70f;
-    public float bobFrequency = 8f;
-    public float bobAmplitude = 0.05f;
-    public bool veiwBob;
+    [Header("Movement")]
+    public float moveSpeed;
 
-    public Transform modelBody;
-    public Rigidbody playerRigidbody;
-    public Animator playerAnimator;
-    public Animation landingAnimation;
-    public Transform CameraTransform;
+    public float groundDrag;
 
-    private Transform playerBody;
-    private PlayerInput playerInput;
-    private InputAction lookAction;
-    private InputAction moveAction;
-    private InputAction jumpAction;
+    public float jumpForce;
+    public float jumpCooldown;
+    public float airMultiplier;
+    bool readyToJump;
 
-    private Vector3 originalCameraLocalPos;
-    private float bobTimer = 0f;
-    private float verticalRotation = 0f;
+    [HideInInspector] public float walkSpeed;
+    [HideInInspector] public float sprintSpeed;
 
-    void Start()
+    [Header("Keybinds")]
+    public KeyCode jumpKey = KeyCode.Space;
+
+    [Header("Ground Check")]
+    public float playerHeight;
+    public LayerMask whatIsGround;
+    bool grounded;
+
+    public Transform orientation;
+
+    float horizontalInput;
+    float verticalInput;
+
+    Vector3 moveDirection;
+
+    Rigidbody rb;
+
+    private void Start()
     {
-        playerBody = GetComponent<Transform>();
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
 
-        playerInput = GetComponent<PlayerInput>();
-        lookAction = playerInput.actions["Look"];
-        moveAction = playerInput.actions["Move"];
-        jumpAction = playerInput.actions["Jump"];
-        Cursor.lockState = CursorLockMode.Locked;
-
-        originalCameraLocalPos = CameraTransform.localPosition;
+        readyToJump = true;
     }
 
-    void Update()
+    private void Update()
     {
-        // --- Look ---
-        Vector2 lookInput = lookAction.ReadValue<Vector2>();
-        float mouseX = lookInput.x * (mouseSensitivity / 10f);
-        float mouseY = lookInput.y * (mouseSensitivity / 10f);
+        // ground check
+        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround);
 
-        // Horizontal rotation (player yaw)
-        playerBody.Rotate(Vector3.up * mouseX);
+        MyInput();
+        SpeedControl();
 
-        // Vertical rotation (camera pitch)
-        verticalRotation -= mouseY;
-        verticalRotation = Mathf.Clamp(verticalRotation, verticalClampMin, verticalClampMax);
-        CameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-
-        // --- Movement ---
-        Vector2 moveInput = moveAction.ReadValue<Vector2>();
-        float threshold = 0.1f;
-        Vector2 dir = moveInput.normalized;
-
-        if (moveInput.magnitude < threshold && IsGrounded())
-        {
-            if (playerAnimator.GetInteger("AnimState") == 10) { }
-            playerAnimator.SetInteger("AnimState", 0);
-        }
-        else if (Approximately(dir, new Vector2(0, 1)) && IsGrounded())
-            playerAnimator.SetInteger("AnimState", 1);
-        else if (Approximately(dir, new Vector2(0, -1)) && IsGrounded())
-            playerAnimator.SetInteger("AnimState", 2);
-        else if (Approximately(dir, new Vector2(-1, 0)) && IsGrounded())
-            playerAnimator.SetInteger("AnimState", 3);
-        else if (Approximately(dir, new Vector2(1, 0)) && IsGrounded())
-            playerAnimator.SetInteger("AnimState", 4);
-        else if (Approximately(dir, new Vector2(0.71f, 0.71f)) && IsGrounded())
-            playerAnimator.SetInteger("AnimState", 6);
-        else if (Approximately(dir, new Vector2(-0.71f, 0.71f)) && IsGrounded())
-            playerAnimator.SetInteger("AnimState", 5);
-        else if (Approximately(dir, new Vector2(0.71f, -0.71f)) && IsGrounded())
-            playerAnimator.SetInteger("AnimState", 8);
-        else if (Approximately(dir, new Vector2(-0.71f, -0.71f)) && IsGrounded())
-            playerAnimator.SetInteger("AnimState", 7);
-        else if (!IsGrounded())
-            playerAnimator.SetInteger("AnimState", 10);
-
-        // Jump
-        if (jumpAction.triggered && IsGrounded())
-        {
-            playerAnimator.SetInteger("AnimState", 9);
-            playerRigidbody.AddForce(Vector3.up * 5f, ForceMode.Impulse);
-        }
-
-        // Apply Movement
-        playerBody.position += playerBody.forward * moveInput.y * moveSpeed * Time.deltaTime;
-        playerBody.position += playerBody.right * moveInput.x * moveSpeed * Time.deltaTime;
-        modelBody.position = playerBody.position;
-
-        // --- Head Bob ---
-        if (veiwBob && moveInput.magnitude > 0.1f && IsGrounded())
-        {
-            bobTimer += Time.deltaTime * bobFrequency;
-            float bobOffset = Mathf.Sin(bobTimer) * bobAmplitude;
-            Vector3 newCamPos = originalCameraLocalPos + new Vector3(0, bobOffset, 0);
-            CameraTransform.localPosition = newCamPos;
-        }
+        // handle drag
+        if (grounded)
+            rb.linearDamping = groundDrag;
         else
+            rb.linearDamping = 0;
+    }
+
+    private void FixedUpdate()
+    {
+        MovePlayer();
+    }
+
+    private void MyInput()
+    {
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
+
+        // when to jump
+        if (Input.GetKey(jumpKey) && readyToJump && grounded)
         {
-            bobTimer = 0;
-            CameraTransform.localPosition = Vector3.Lerp(CameraTransform.localPosition, originalCameraLocalPos, Time.deltaTime * 10f);
+            readyToJump = false;
+
+            Jump();
+
+            Invoke(nameof(ResetJump), jumpCooldown);
         }
     }
 
-    private bool IsGrounded()
+    private void MovePlayer()
     {
-        Debug.DrawRay(modelBody.position, Vector3.down * 0.05f, Color.red);
-        return Physics.Raycast(modelBody.position + new Vector3(0, 0.05f, 0), Vector3.down, 0.1f);
+        // calculate movement direction
+        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+
+        // on ground
+        if (grounded)
+            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+
+        // in air
+        else if (!grounded)
+            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
 
-    private bool Approximately(Vector2 a, Vector2 b)
+    private void SpeedControl()
     {
-        return Vector2.Distance(a, b) < 0.05f;
+        Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+        // limit velocity if needed
+        if (flatVel.magnitude > moveSpeed)
+        {
+            Vector3 limitedVel = flatVel.normalized * moveSpeed;
+            rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
+        }
+    }
+
+    private void Jump()
+    {
+        // reset y velocity
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+    }
+    private void ResetJump()
+    {
+        readyToJump = true;
     }
 }
