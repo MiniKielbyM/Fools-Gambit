@@ -7,13 +7,13 @@ public class PlayerControl : MonoBehaviour
     public float jumpforce = 5f;
     public bool OnGround = false;
     Rigidbody rb;
-    public float XmouseSensitivity = 250f;
-    public float YmouseSensitivity = 2;
+    public float mouseSensitivity = 250f;
     public Transform playerBody; // reference to the player's transform
     private float xRotation = 45f;
     public Camera cam;
     public int dir = 0;
     public bool finished = true;
+    public bool isRunning = false;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -62,6 +62,15 @@ public class PlayerControl : MonoBehaviour
         if (Input.GetKey(KeyCode.W)) {
             vertical += 1f;
             dir = 1;
+            if (Input.GetKey(KeyCode.LeftShift)){
+                isRunning = true;
+                moveSpeed = 10f;
+            }
+            else
+            {
+                isRunning = false;
+                moveSpeed = 5f;
+            }
         }
         if (Input.GetKey(KeyCode.S)) {
             vertical -= 1f;
@@ -123,15 +132,14 @@ public class PlayerControl : MonoBehaviour
     void mousemovement()
     {
         // Get mouse input
-        float mouseX = Input.GetAxis("Mouse X") * XmouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * XmouseSensitivity * Time.deltaTime;
-
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
         // Rotate the camera up and down
         xRotation -= mouseY;
-        float camrot = xRotation * YmouseSensitivity;
-        camrot = Mathf.Clamp(xRotation, -90f, 90f); // limit looking too far up or down
-        playerBody.Rotate(Vector3.up*XmouseSensitivity, mouseX);
-        cam.transform.localRotation = Quaternion.Euler(camrot,0, 0f);
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f); // limit looking too far up or down
+
+        playerBody.Rotate(Vector3.up, mouseX);
+        cam.transform.localRotation = Quaternion.Euler(xRotation,0, 0f);
         // Rotate the player left and right
     }
 }

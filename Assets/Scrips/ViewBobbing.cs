@@ -7,6 +7,7 @@ public class ViewBobbing : MonoBehaviour
     private float defaultYPos;
     private float timer = 0f;
     public bool grounded;
+    public bool isRunning;
     void Start()
     {
         defaultYPos = transform.localPosition.y;
@@ -18,8 +19,17 @@ public class ViewBobbing : MonoBehaviour
         // Check if any movement keys are pressed
         bool isMoving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) ||
                         Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D);
+        isRunning = gameObject.GetComponentInParent<PlayerControl>().isRunning;
+        if (isRunning)
+        {
+            bobbingSpeed = 12f;
+        }
+        else
+        {
+            bobbingSpeed = 6f;
+        }
 
-        if (isMoving&& grounded)
+        if (isMoving && grounded)
         {
             timer += Time.deltaTime * bobbingSpeed;
             float newY = defaultYPos + Mathf.Sin(timer) * bobbingAmount;
