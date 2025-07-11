@@ -1149,8 +1149,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9f40b109b0e6c3489ba5a0b6611d8cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  jumpforce: 5
+  moveSpeed: 7
+  jumpForce: 5
+  uplift: 5
+  dashForce: 20
   OnGround: 0
   mouseSensitivity: 250
   playerBody: {fileID: 1171768662}

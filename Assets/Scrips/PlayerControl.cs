@@ -4,7 +4,9 @@ using UnityEngine;
 public class PlayerControl : MonoBehaviour
 {
     public float moveSpeed = 5f;
-    public float jumpforce = 5f;
+    public float jumpForce = 10f;
+    public float uplift = 5f;
+    public float dashForce = 500f;
     public bool OnGround = false;
     Rigidbody rb;
     public float mouseSensitivity = 250f;
@@ -59,18 +61,22 @@ public class PlayerControl : MonoBehaviour
         float horizontal = 0f;
         float vertical = 0f;
 
-        if (Input.GetKey(KeyCode.W)) {
+        //Sprint mechanics
+        if (Input.GetKey(KeyCode.LeftShift) && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)))
+        {
+            isRunning = true;
+            moveSpeed = 10f;
+        }
+        else
+        {
+            isRunning = false;
+            moveSpeed = 5f;
+        }
+        //All directional movement
+        if (Input.GetKey(KeyCode.W))
+        {
             vertical += 1f;
             dir = 1;
-            if (Input.GetKey(KeyCode.LeftShift)){
-                isRunning = true;
-                moveSpeed = 10f;
-            }
-            else
-            {
-                isRunning = false;
-                moveSpeed = 5f;
-            }
         }
         if (Input.GetKey(KeyCode.S)) {
             vertical -= 1f;
@@ -114,16 +120,30 @@ public class PlayerControl : MonoBehaviour
         // Preserve Y velocity (gravity / jump)
         Vector3 currentVelocity = rb.linearVelocity;
         Vector3 targetVelocity = moveDirection * moveSpeed;
-            rb.linearVelocity = new Vector3(targetVelocity.x, currentVelocity.y, targetVelocity.z);
+        rb.linearVelocity = new Vector3(targetVelocity.x, currentVelocity.y, targetVelocity.z);
+
+        DashPlayer(moveDirection);
        
         // Jump
         if (Input.GetKey(KeyCode.Space) && OnGround)
         {
-            rb.AddForce(Vector3.up * jumpforce, ForceMode.Impulse);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             OnGround = false;
         }
 
+      
     }
+    void DashPlayer(Vector3 moveDirection)
+    {
+        // Dash
+        if (Input.GetKey(KeyCode.LeftAlt) && OnGround)
+        {
+            rb.linearVelocity = moveDirection * dashForce;
+
+        }
+    }
+
+    
     private void OnCollisionEnter(Collision collision)
     {
         OnGround = true;
