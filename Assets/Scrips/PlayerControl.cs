@@ -114,7 +114,7 @@ public class PlayerControl : MonoBehaviour
             }
         }
         if(finished) dir = 0;
-        // Calculate movement direction relative to player�s forward
+        // Calculate movement direction relative to player's forward
         Vector3 moveDirection = (transform.forward * vertical + transform.right * horizontal).normalized;
 
         // Preserve Y velocity (gravity / jump)
@@ -123,15 +123,12 @@ public class PlayerControl : MonoBehaviour
         rb.linearVelocity = new Vector3(targetVelocity.x, currentVelocity.y, targetVelocity.z);
 
         DashPlayer(moveDirection);
-       
         // Jump
         if (Input.GetKey(KeyCode.Space) && OnGround)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             OnGround = false;
         }
-
-      
     }
     void DashPlayer(Vector3 moveDirection)
     {
@@ -143,7 +140,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    
+
     private void OnCollisionEnter(Collision collision)
     {
         OnGround = true;
