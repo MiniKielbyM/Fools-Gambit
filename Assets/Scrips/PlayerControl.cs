@@ -7,6 +7,7 @@ public class PlayerControl : MonoBehaviour
     public float jumpForce = 10f;
     public float uplift = 5f;
     public float dashForce = 500f;
+    public float dashCoolDown = 0.5f;
     public bool OnGround = false;
     Rigidbody rb;
     public float mouseSensitivity = 250f;
@@ -16,6 +17,8 @@ public class PlayerControl : MonoBehaviour
     public int dir = 0;
     public bool finished = true;
     public bool isRunning = false;
+    public bool dashOnCoolDown = false;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -130,13 +133,20 @@ public class PlayerControl : MonoBehaviour
             OnGround = false;
         }
     }
+
+    void ResetDash()
+    {
+        dashOnCoolDown = false;
+    }
+
     void DashPlayer(Vector3 moveDirection)
     {
         // Dash
-        if (Input.GetKey(KeyCode.LeftAlt) && OnGround)
+        if (Input.GetKey(KeyCode.LeftAlt) && OnGround && dashOnCoolDown==false)
         {
             rb.linearVelocity = moveDirection * dashForce;
-
+            dashOnCoolDown = true;
+            Invoke(nameof(ResetDash),dashCoolDown);
         }
     }
 

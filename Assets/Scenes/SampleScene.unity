@@ -1153,6 +1153,7 @@ MonoBehaviour:
   jumpForce: 5
   uplift: 5
   dashForce: 20
+  dashCoolDown: 9
   OnGround: 0
   mouseSensitivity: 250
   playerBody: {fileID: 1171768662}
@@ -1160,6 +1161,7 @@ MonoBehaviour:
   dir: 0
   finished: 1
   isRunning: 0
+  dashOnCoolDown: 0
 --- !u!114 &1171768669
 MonoBehaviour:
   m_ObjectHideFlags: 0
